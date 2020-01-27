@@ -1,3 +1,5 @@
+import itertools
+import operator
 import pathlib
 import re
 import shutil
@@ -17,26 +19,30 @@ df_source = pd.read_csv(FILE_SOURCE)
 @task(default=True)
 def extract(c, round=None, category=None, task=None, solution=None, max=10, per_task=True, seed=14):
     assert max > 0
+    groupby_cols = ["Round", "RoundCategory", "Task", "Solution"]
+
     df = pd.read_csv(FILE_SOURCE)
     df = _filter_sources(df, round, category, task, solution)
 
     if df.shape[0] > 0:
         if per_task:
-            df = (df.groupby(["Round", "RoundCategory", "Task"])
+            df = (df.groupby(groupby_cols)
                   .apply(lambda x: x.sample(min(max, len(x)), random_state=seed)))
         else:
             df = df.sample(max, random_state=seed)
 
-        for it in df.itertuples():
-            key = f"{it.Round}-{it.RoundCategory}-{it.Task}-{it.Solution}"
+        groupby_getter = operator.attrgetter(*groupby_cols)
+        for groupby_key, rows in itertools.groupby(df.itertuples(), groupby_getter):
+            key = "-".join([str(it) for it in groupby_key])
             dir_problem = pathlib.Path(DIR_BUILD, key)
-            dir_solution = pathlib.Path(dir_problem, it.DeveloperId)
+            for it in rows:
+                dir_solution = pathlib.Path(dir_problem, it.DeveloperId)
 
-            dir_solution.mkdir(parents=True, exist_ok=True)
+                dir_solution.mkdir(parents=True, exist_ok=True)
 
-            content = re.sub("package .*;", "", it.FileContent)
-            with pathlib.Path(dir_solution, it.File).open("w") as files:
-                files.write(content)
+                content = re.sub("package .*;", "", it.FileContent)
+                with pathlib.Path(dir_solution, it.File).open("w") as files:
+                    files.write(content)
     else:
         print(f"No valid solution for given filters: "
               f"round={round}, category={category}, task={task}, solution={solution}")
@@ -56,4 +62,4 @@ def _filter_sources(df, round, category, task, solution) -> pd.DataFrame:
 
 @task
 def clean(c):
-    shutil.rmtree(DIR_BUILD)
+    shutil.rmtree(DIR_BUILD, ignore_errors=True)
