@@ -61,23 +61,19 @@ def _source_filter(df, round, category, task, solution) -> pd.DataFrame:
 
 
 @task(name="update")
-def source_update(c, round=None, category=None, task=None, solution=None, developer=None):
-    df = pd.read_csv(FILE_SOURCE).set_index(KEY_COLUMNS + ["DeveloperId"])
+def source_update(c, round=None, category=None, task=None, solution=None):
+    df = pd.read_csv(FILE_SOURCE)
 
-    dir_solution = pathlib.Path(DIR_BUILD, f"{round}-{category}-{task}-{solution}/{developer}")
+    df_filtered = _source_filter(df, round, category, task, int(solution))
 
-    df_key = (round, category, task, int(solution), developer)
-    if df_key in df.index:
-        file_solution = pathlib.Path(dir_solution, df.loc[df_key].iloc[0].File)
+    for it in df_filtered.itertuples():
+        file_solution = pathlib.Path(DIR_BUILD,
+                                     f"{it.Round}-{it.RoundCategory}-{it.Task}-{it.Solution}/{it.DeveloperId}/{it.File}")
         if file_solution.exists():
             with file_solution.open("r") as f:
-                df.at[df_key, "FileContent"] = f.read()
+                df.at[it.Index, "FileContent"] = f.read()
 
-            df.reset_index().to_csv(FILE_SOURCE, index=False)
-        else:
-            print("Solution cannot be updated because the new solution file does not exist.")
-    else:
-        print("Solution cannot be updated because the target entry does not exist.")
+    df.to_csv(FILE_SOURCE, index=False)
 
 
 @task(name="trigger")
