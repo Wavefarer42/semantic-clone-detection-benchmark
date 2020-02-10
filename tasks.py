@@ -17,13 +17,13 @@ KEY_COLUMNS = ["Round", "Category", "Task", "Solution"]
 
 
 @task(name="source", default=True)
-def source_extract(c, round=None, category=None, task=None, solution=None, max=10, per_task=True, seed=14):
+def source_extract(c, round=None, category=None, task=None, solution=None, dev=None, max=10, per_task=True, seed=14):
     assert max > 0
     df_source = pd.read_csv(FILE_SOURCE)
     df_input = pd.read_csv(FILE_INPUT)
 
-    df_source = _source_filter(df_source, round, category, task, solution)
-    df_input = _source_filter(df_input, round, category, task, solution).set_index(KEY_COLUMNS)
+    df_source = _source_filter(df_source, round, category, task, solution, dev)
+    df_input = _source_filter(df_input, round, category, task, solution, dev).set_index(KEY_COLUMNS)
 
     if df_source.shape[0] > 0:
         if per_task:
@@ -37,7 +37,7 @@ def source_extract(c, round=None, category=None, task=None, solution=None, max=1
             key = "-".join([str(it) for it in groupby_key])
             dir_problem = pathlib.Path(DIR_BUILD, key)
             for it in rows:
-                dir_solution = pathlib.Path(dir_problem, it.Developer)
+                dir_solution = pathlib.Path(dir_problem, it.DeveloperId)
 
                 dir_solution.mkdir(parents=True, exist_ok=True)
 
@@ -53,7 +53,7 @@ def source_extract(c, round=None, category=None, task=None, solution=None, max=1
               f"round={round}, category={category}, task={task}, solution={solution}")
 
 
-def _source_filter(df, round, category, task, solution) -> pd.DataFrame:
+def _source_filter(df, round, category, task, solution, dev=None) -> pd.DataFrame:
     if round is not None:
         df = df[df.Round == round]
     if category is not None:
@@ -62,6 +62,8 @@ def _source_filter(df, round, category, task, solution) -> pd.DataFrame:
         df = df[df.Task == task]
     if solution is not None:
         df = df[df.Solution == solution]
+    if dev is not None and "Developer" in df.columns:
+        df = df[df.Developer == dev]
     return df
 
 
