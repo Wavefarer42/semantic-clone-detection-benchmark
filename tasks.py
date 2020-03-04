@@ -37,7 +37,7 @@ def source_extract(c, round=None, category=None, task=None, solution=None, dev=N
             key = "-".join([str(it) for it in groupby_key])
             dir_problem = pathlib.Path(DIR_BUILD, key)
             for it in rows:
-                dir_solution = pathlib.Path(dir_problem, it.DeveloperId)
+                dir_solution = pathlib.Path(dir_problem, it.Developer)
 
                 dir_solution.mkdir(parents=True, exist_ok=True)
 
