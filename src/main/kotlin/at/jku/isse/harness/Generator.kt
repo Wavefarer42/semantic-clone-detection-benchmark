@@ -3,7 +3,7 @@ package at.jku.isse.harness
 import java.util.*
 import java.lang.Math as jMath
 
-object Math {
+object Generator {
     val rng = Random(42)
 
     fun uniform(minimum: Int, maximum: Int): () -> Int = { rng.nextInt(maximum - minimum) + minimum }
