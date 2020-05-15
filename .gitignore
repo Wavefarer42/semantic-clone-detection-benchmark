@@ -1,2 +1,4 @@
 .idea/
 build/
+env-gradient-dataset-clones
+.gradle

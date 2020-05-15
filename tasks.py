@@ -17,7 +17,7 @@ KEY_COLUMNS = ["Round", "Category", "Task", "Solution"]
 
 
 @task(name="source", default=True)
-def source_extract(c, round=None, category=None, task=None, solution=None, dev=None, max=10, per_task=True, seed=14):
+def source_extract(c, round=None, category=None, task=None, solution=None, dev=None, max=100000, per_task=True, seed=14):
     assert max > 0
     df_source = pd.read_csv(FILE_SOURCE)
     df_input = pd.read_csv(FILE_INPUT)

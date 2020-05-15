@@ -1,9 +1,14 @@
 #!/bin/bash
 
-echo "Creating conda environment"
+name=${PWD##*/}
+dir_env="./env-${name}"
+condash=$(which conda)
 
-source ~/miniconda3/etc/profile.d/conda.sh
-conda create -n gradient-dataset-clones -c conda-forge python=3.6 -y
-conda activate gradient-dataset-clones
-conda install -y -c conda-forge invoke=1.3 pandas=0.25
+echo "Creating conda environment: ${name}"
+eval "$(conda shell.bash hook)"
+conda create -y --prefix ${dir_env}
+conda activate ${dir_env}
+conda install -y --override-channels -c main -c conda-forge  -c pytorch -c tallic \
+    python=3.6 invoke=1.3 pandas=0.25
+conda env export > environment.yml
 exit 0
