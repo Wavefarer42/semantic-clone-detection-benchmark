@@ -1,37 +1,35 @@
 package google.jam.r0AA;
 
 /**
- * @author 0Be
+ * @author a.v2612
  */
 public class Dev5 {
 
     public static int run(String _pattern, int _num) {
-        char[] faces = _pattern.toCharArray();
-        int n = _num;
 
-        int length = faces.length;
-
-        int count = 0;
-
-        for (int j = length - 1; j >= n - 1; j--) {
-            if (faces[j] == '-') {
-                count++;
-                for (int k = j; k > j - n; k--) {
-                    if (faces[k] == '+') {
-                        faces[k] = '-';
-                    } else {
-                        faces[k] = '+';
-                    }
+        int j = 0;
+        int result = 0;
+        char[] charArr = _pattern.toCharArray();
+        while (j < charArr.length) {
+            if (charArr[j] == '+') {
+                j++;
+                continue;
+            } else {
+                if (_pattern.substring(j).length() < _num) {
+                    result = -1;
+                    break;
                 }
-            }
-        }
+                for (int k = 0, l = j; k < _num; k++, l++) {
+                    if (charArr[l] == '+')
+                        charArr[l] = '-';
+                    else
+                        charArr[l] = '+';
 
-        for (int j = 0; j < length; j++) {
-            if (faces[j] == '-') {
-                break;
+                }
+                result++;
             }
+            j++;
         }
-
-        return count;
+        return result;
     }
 }

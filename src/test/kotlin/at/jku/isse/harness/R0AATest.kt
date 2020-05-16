@@ -11,23 +11,17 @@ class R0AATest : StringSpec({
     }
 
     "equal results"{
-        val requests = R0AA.loadData()
-
-        val result = R0AA.allDevs.map { dev ->
-            val clazz = Class.forName("${R0AA.packagePrefix}.$dev")
-            val runMethod = clazz.getDeclaredMethod(R0AA.runMethod, requests[0].pattern::class.java, requests[0].num::class.java)
-
-
-            val results = requests.map {
-                runMethod.invoke(null, it.pattern, it.num)
+        val result = R0AA.targets(R0AA.allDevs).map { target ->
+            val results = R0AA.requests.map {
+                target.invoke(null, it.pattern, it.num)
             }
 
-            Pair(dev, results)
+            Pair(target, results)
         }
 
         result.forAll {
             it.second shouldHaveSize 100
-            it.second shouldBe  result.first().second
+            it.second shouldBe result.first().second
         }
     }
 })

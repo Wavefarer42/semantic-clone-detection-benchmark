@@ -1,61 +1,49 @@
 package google.jam.r0AB;
 
 /**
- * @author 24man
+ * @author a.v2612
  */
 public class Dev8 {
     public static long run(long _num) {
-        int[][] lofl = new int[1][];
-        String input = String.valueOf(_num);
-        int length = input.length();
-        lofl[0] = new int[length];
-        for (int j = 0; j < length; j++) {
-            lofl[0][j] = Integer.parseInt(input.substring(j, j + 1));
+        return LastTidy(Long.toString(_num));
+    }
+
+    static long LastTidy(String n) {
+        char[] num = n.toCharArray();
+        if (Tidy(Long.parseLong(n))) {
+            return Long.parseLong(n);
+        } else {
+            int a = Integer.parseInt("" + num[0]);
+            for (int i = 1; i < num.length; i++) {
+                if (Integer.parseInt("" + num[i]) > a) {
+                    a = Integer.parseInt("" + num[i]);
+                } else {
+                    num[i - 1] = ("" + (Integer.parseInt("" + num[i - 1]) - 1)).charAt(0);
+                    for (int j = i; j < num.length; j++) {
+                        num[j] = '9';
+                    }
+                    break;
+                }
+            }
         }
-
-        adjust(lofl[0], lofl[0].length - 1);
-
-        return dsum(lofl[0], 0, lofl[0].length);
+        return LastTidy(new String(num));
     }
 
 
-    public static int dsum(int[] tosum, int start, int end) {
-        int total = 0;
-
-        for (int i = start; i < end; i++)
-            total = total + tosum[i];
-
-        return total;
-
-    }
-
-    public static void adjust(int[] dights, int tofix) {
-        int size = 0;
-        //System.out.println(Arrays.toString(dights));
-        for (int i = 0; i < dights.length; i++) {
-            if (dights[i] != 0)
+    static boolean Tidy(long a) {
+        boolean result = true;
+        long lastMax = 10;
+        while (a > 0) {
+            long x = a % 10;
+            if (x > lastMax) {
+                result = false;
                 break;
-            else
-                size++;
+            } else {
+                lastMax = x;
+                a = a / 10;
+            }
+
         }
-
-        if (tofix <= size)
-            return;
-
-        if (dights[tofix] < dights[tofix - 1]) {
-            for (int p = tofix; p < dights.length; p++)
-                dights[p] = 9;
-            dights[tofix - 1]--;
-            //if(dights[tofix-1]>9||dights[tofix]>9)
-            //   System.out.println("errror");
-
-            if (tofix + 1 < dights.length && dights[tofix] > dights[tofix + 1])
-                adjust(dights, tofix + 1);
-        }
-
-        if (tofix < dights.length - 1 && dights[tofix] > dights[tofix + 1])
-            adjust(dights, tofix + 1);
-
-        adjust(dights, tofix - 1);
+        return result;
     }
 }

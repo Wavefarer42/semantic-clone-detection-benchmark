@@ -1,5 +1,7 @@
 package at.jku.isse.harness
 
+import java.lang.reflect.Method
+
 object R0AB {
     data class Request(val num: Long)
 
@@ -7,9 +9,10 @@ object R0AB {
     const val resourceFile = "R0AB0.txt"
     const val packagePrefix = "google.jam.r0AB"
     const val runMethod = "run"
+    val targetMethodTypes = arrayOf(Long::class.java)
 
-    fun loadData(): List<Request> {
-        return Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
+    val requests: List<Request> by lazy {
+        Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
             stream.reader()
                     .readLines()
                     .drop(1)
@@ -19,15 +22,17 @@ object R0AB {
         }
     }
 
+    fun targets(devs: List<String>): List<Method> {
+        return devs.map {
+            val clazz = Class.forName("$packagePrefix.$it")
+            clazz.getDeclaredMethod(runMethod, *targetMethodTypes)
+        }
+    }
+
     fun run(devs: List<String> = this.allDevs) {
-        val requests = loadData()
-
-        devs.forEach { dev ->
-            val clazz = Class.forName("$packagePrefix.$dev")
-            val runMethod = clazz.getDeclaredMethod(runMethod, requests[0].num::class.java)
-
+        targets(devs).forEach { target ->
             requests.forEach {
-                runMethod.invoke(null, it.num)
+                target.invoke(null, it.num)
             }
         }
     }

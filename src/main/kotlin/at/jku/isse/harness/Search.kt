@@ -1,5 +1,7 @@
 package at.jku.isse.harness
 
+import java.lang.reflect.Method
+
 object Search {
     data class Request(val list: List<Int>)
 
@@ -7,23 +9,26 @@ object Search {
     const val size = 1000
     const val packagePrefix = "at.jku.isse.search"
     const val runMethod = "run"
+    val targetMethodTypes = arrayOf(List::class.java)
 
-    fun loadData(): List<Request> {
+    val requests: List<Request> by lazy {
         val sampler = Generator.uniform(0, 20)
-        return (0 until size).map {
+        (0 until size).map {
             Request(IntArray(20) { sampler() }.asList())
         }
     }
 
+    fun targets(devs: List<String>): List<Method> {
+        return devs.map {
+            val clazz = Class.forName("${packagePrefix}.$it")
+            clazz.getDeclaredMethod(runMethod, *targetMethodTypes)
+        }
+    }
+
     fun run(devs: List<String> = this.allDevs) {
-        val requests = loadData()
-
-        devs.forEach { dev ->
-            val clazz = Class.forName("$packagePrefix.$dev")
-            val runMethod = clazz.getDeclaredMethod(runMethod, requests[0].list::class.java)
-
+        targets(devs).forEach { targets ->
             requests.forEach {
-                runMethod.invoke(null, it.list)
+                targets.invoke(null, it.list)
             }
         }
     }

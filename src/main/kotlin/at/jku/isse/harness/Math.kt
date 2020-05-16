@@ -1,5 +1,7 @@
 package at.jku.isse.harness
 
+import java.lang.reflect.Method
+
 object Math {
     data class Request(val num: Int)
 
@@ -7,23 +9,26 @@ object Math {
     const val size = 1000
     const val packagePrefix = "at.jku.isse.math"
     const val runMethod = "run"
+    val targetMethodTypes = arrayOf(Int::class.java)
 
-    fun loadData(): List<Request> {
+    val requests: List<Request> by lazy {
         val sampler = Generator.uniform(0, 10)
-        return (0 until size).map {
+        (0 until size).map {
             Request(sampler())
         }
     }
 
+    fun targets(devs: List<String>): List<Method> {
+        return devs.map {
+            val clazz = Class.forName("${packagePrefix}.$it")
+            clazz.getDeclaredMethod(runMethod, *targetMethodTypes)
+        }
+    }
+
     fun run(devs: List<String> = this.allDevs) {
-        val requests = loadData()
-
-        devs.forEach { dev ->
-            val clazz = Class.forName("$packagePrefix.$dev")
-            val runMethod = clazz.getDeclaredMethod(runMethod, requests[0].num::class.java)
-
+        targets(devs).forEach { target ->
             requests.forEach {
-                runMethod.invoke(null, it.num)
+                target.invoke(null, it.num)
             }
         }
     }

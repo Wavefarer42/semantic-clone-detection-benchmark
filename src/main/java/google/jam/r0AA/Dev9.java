@@ -1,43 +1,38 @@
 package google.jam.r0AA;
 
 /**
- * @author 2001zhaozhao
+ * @author 8163264128
  */
 public class Dev9 {
     public static int run(String _pattern, int _num) {
-        String str = _pattern;
-        int movecount = _num;
-        boolean[] list = new boolean[str.length()];
-        boolean lastoneistrue = false;
-        for (int j = 0; j < str.length(); j++) {
-            char c = str.charAt(j);
-            boolean thisoneistrue = c == '+';
-            list[j] = lastoneistrue != thisoneistrue; //true if its different
-            lastoneistrue = thisoneistrue;
-        }
+        return flips(diff(_pattern), _num);
+    }
 
-        //calculate
-        int flips = 0;
-        boolean currentstate = false;
-        for (int j = 0; j < str.length() + 1 - movecount; j++) {
-            currentstate = list[j] ? !currentstate : currentstate; //get new current
-            if (!currentstate) {
-                //flip
-                currentstate = !currentstate;
-                list[j] = !list[j];
-                //flip back after
-                if (j + movecount < str.length()) list[j + movecount] = !list[j + movecount];
-                flips++;
-            }
-        }
+    private static boolean toBoolean(char c) {
+        return c == '+';
+    }
 
-        boolean valid = true;
-        //check if the last ones are all a plus
-        for (int j = str.length() + 1 - movecount; j < str.length(); j++) {
-            currentstate = list[j] ? !currentstate : currentstate; //get new current
-            if (currentstate == false) valid = false;
+    private static boolean[] diff(String S) {
+        boolean[] d = new boolean[S.length()];
+        d[0] = toBoolean(S.charAt(0));
+        for (int i = 1; i < S.length(); i++) {
+            d[i] = S.charAt(i - 1) == S.charAt(i);
         }
+        return d;
+    }
 
-        return flips;
+    private static int flips(boolean[] d, int K) {
+        int f = 0;
+        boolean c = true;
+        for (int i = 0; i < d.length; i++) {
+            c ^= !d[i];
+            if (c) continue;
+            if (i + K > d.length) return -1;
+            f++;
+            c = true;
+            if (i + K != d.length)
+                d[i + K] = !d[i + K];
+        }
+        return f;
     }
 }

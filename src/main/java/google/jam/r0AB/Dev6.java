@@ -1,34 +1,49 @@
 package google.jam.r0AB;
 
 /**
- * @author 3mara
+ * @author 8163264128
  */
 public class Dev6 {
+
     public static long run(long _num) {
-        char[] array = String.valueOf(_num).toCharArray();
-        boolean run = true;
-        boolean borrow = false;
-        int farSub = array.length;
-        while (run) {
-            run = false;
-            for (int j = array.length - 2; j >= 0; j--) {
-                if (array[j] > array[j + 1]) {
-                    if (!borrow && j < farSub) {
-                        array[j]--;
-                        farSub = j;
-                    }
-                    array[j + 1] = '9';
-                    borrow = true;
-                    j++;
-                    run = true;
-                } else {
-                    borrow = false;
-                }
+        int[] n = toArray(_num);
+        int[] m = new int[18];
+        tidyMaxHelper(m, n, m.length - 1, 0);
+        return fromArray(m);
+    }
+
+    private static int[] toArray(long N) {
+        int[] n = new int[18];
+        for (int j = 0; N > 0; j++, N /= 10) n[j] = (int)(N % 10);
+        return n;
+    }
+
+    private static long fromArray(int[] n) {
+        long N = 0;
+        for (int i = n.length - 1; i >= 0; i--)
+            N = 10 * N + n[i];
+        return N;
+    }
+
+    private static boolean atMost(int[] m, int[] n) {
+        int i = m.length - 1;
+        while (m[i] == n[i]) {
+            if (i == 0) return true;
+            i--;
+        }
+        return m[i] < n[i];
+    }
+
+    private static boolean tidyMaxHelper(int[] m, int[] n, int i, int k) {
+        if (i < 0) return true;
+        for (int j = 9; j >= k; j--) {
+            m[i] = j;
+            if (atMost(m, n)) {
+                if (tidyMaxHelper(m, n, i - 1, j))
+                    return true;
             }
         }
-        String text = String.valueOf(array);
-        int index = text.indexOf("0");
-
-        return index + 1;
+        m[i] = 0;
+        return false;
     }
 }

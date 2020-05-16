@@ -4,92 +4,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author 0phi
+ * @author Aemon
  */
 public class Dev5 {
 
     public static List<String> run(int _r, int _c, List<String> _patterns) {
+        int R = _r, C = _c;
 
-        int rows = _r;
-
-        int columns = _c;
-
-        char[][] cakeDesign = new char[_r][];
-        for (int i = 0; i < cakeDesign.length; i++) {
-            cakeDesign[i] = _patterns.get(i).toCharArray();
+        char[][] mat = new char[R][C];
+        for (int i = 0; i < R; i++) {
+            String line = _patterns.get(i);
+            for (int j = 0; j < C; j++) {
+                mat[i][j] = line.charAt(j);
+            }
         }
 
-        List<Character> markedChars = new ArrayList<>();
+        for (int i = 0; i < R; i++) {
+            char prev = '-';
+            for (int j = 0; j < C; j++) {
+                if (prev != '-' && mat[i][j] == '?') {
+                    mat[i][j] = prev;
+                } else if (mat[i][j] != '?') prev = mat[i][j];
+            }
+            prev = '-';
+            for (int j = C - 1; j >= 0; j--) {
+                if (prev != '-' && mat[i][j] == '?') {
+                    mat[i][j] = prev;
+                } else if (mat[i][j] != '?') prev = mat[i][j];
+            }
+        }
 
-        for (int r = 0; r < rows; r++) {
-            for (int col = 0; col < columns; col++) {
-
-                if (cakeDesign[r][col] != '?' && !markedChars.contains(cakeDesign[r][col])) {
-                    markedChars.add(cakeDesign[r][col]);
-                    int min = col;
-                    int max = col;
-
-                    for (int x = col + 1; x < columns; x++) {
-                        if (cakeDesign[r][x] == '?') {
-                            cakeDesign[r][x] = cakeDesign[r][col];
-                            max = x;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    for (int y = col - 1; y > -1; y--) {
-                        if (cakeDesign[r][y] == '?') {
-                            cakeDesign[r][y] = cakeDesign[r][col];
-                            min = y;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    for (int beforeRow = r - 1; beforeRow > -1; beforeRow--) {
-                        boolean isAllUnfilled = true;
-                        for (int c = min; c <= max; c++) {
-                            if (cakeDesign[beforeRow][c] != '?') {
-                                isAllUnfilled = false;
-                                break;
-                            }
-                        }
-
-                        if (isAllUnfilled) {
-                            for (int c = min; c <= max; c++) {
-                                cakeDesign[beforeRow][c] = cakeDesign[r][col];
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-
-                    for (int afterRow = r + 1; afterRow < rows; afterRow++) {
-                        boolean isAllUnfilled = true;
-                        for (int c = min; c <= max; c++) {
-                            if (cakeDesign[afterRow][c] != '?') {
-                                isAllUnfilled = false;
-                                break;
-                            }
-                        }
-
-                        if (isAllUnfilled) {
-                            for (int c = min; c <= max; c++) {
-                                cakeDesign[afterRow][c] = cakeDesign[r][col];
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-
-                }
+        for (int i = 1; i < R; i++) {
+            for (int j = 0; j < C; j++) {
+                if (mat[i][j] == '?') mat[i][j] = mat[i - 1][j];
+            }
+        }
+        for (int i = R - 1; i >= 0; i--) {
+            for (int j = 0; j < C; j++) {
+                if (mat[i][j] == '?') mat[i][j] = mat[i + 1][j];
             }
         }
 
         List<String> result = new ArrayList<>();
-        for (int i = 0; i < cakeDesign.length; i++) {
-            result.add(new String(cakeDesign[i]));
+        for (char[] chars : mat) {
+            result.add(new String(chars));
         }
 
         return result;

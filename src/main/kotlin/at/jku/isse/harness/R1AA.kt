@@ -1,5 +1,7 @@
 package at.jku.isse.harness
 
+import java.lang.reflect.Method
+
 object R1AA {
     data class Request(val r: Int, val c: Int, val pattern: List<String>)
 
@@ -7,9 +9,10 @@ object R1AA {
     const val resourceFile = "R1AA0.txt"
     const val packagePrefix = "google.jam.r1AA"
     const val runMethod = "run"
+    val targetMethodTypes = arrayOf(Int::class.java, Int::class.java, List::class.java)
 
-    fun loadData(): List<Request> {
-        return Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
+    val requests: List<Request> by lazy {
+        Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
             val inputs = stream.reader()
                     .readLines()
                     .drop(1)
@@ -34,18 +37,17 @@ object R1AA {
         }
     }
 
+    fun targets(devs: List<String>): List<Method> {
+        return devs.map {
+            val clazz = Class.forName("${packagePrefix}.$it")
+            clazz.getDeclaredMethod(runMethod, *targetMethodTypes)
+        }
+    }
+
     fun run(devs: List<String> = this.allDevs) {
-        val requests = loadData()
-
-        devs.forEach { dev ->
-            val clazz = Class.forName("$packagePrefix.$dev")
-            val runMethod = clazz.getDeclaredMethod(
-                    runMethod,
-                    requests[0].r::class.java, requests[0].c::class.java, requests[0].pattern::class.java
-            )
-
+        targets(devs).forEach { target ->
             requests.forEach {
-                runMethod.invoke(null, it.r, it.c, it.pattern)
+                target.invoke(null, it.r, it.c, it.pattern)
             }
         }
     }

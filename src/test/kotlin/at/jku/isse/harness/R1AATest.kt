@@ -11,17 +11,12 @@ class R1AATest : StringSpec({
     }
 
     "equal results"{
-        val requests = R1AA.loadData()
-
-        val result = R1AA.allDevs.map { dev ->
-            val clazz = Class.forName("${R1AA.packagePrefix}.$dev")
-            val runMethod = clazz.getDeclaredMethod(R1AA.runMethod, requests[0].r::class.java, requests[0].c::class.java, requests[0].pattern::class.java)
-
-            val results = requests.map {
-                runMethod.invoke(null, it.r, it.c, it.pattern)
+        val result = R1AA.targets(R1AA.allDevs).map { target ->
+            val results = R1AA.requests.map {
+                target.invoke(null, it.r, it.c, it.pattern)
             }
 
-            Pair(dev, results)
+            Pair(target, results)
         }
 
         result.forAll {

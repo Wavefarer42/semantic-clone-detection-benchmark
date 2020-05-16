@@ -4,107 +4,68 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Ababwa
+ * @author Akaiyo
  */
 public class Dev8 {
     public static List<String> run(int _r, int _c, List<String> _patterns) {
+        int R = _r;
+        int C = _c;
 
-        char[][] junk = new char[_r][];
-        for (int k = 0; k < _r; k++) {
-            junk[k] = _patterns.get(k).toCharArray();
+
+        char[][] field = new char[R][C];
+
+        for (int r = 0; r < R; r++) {
+
+            field[r] = _patterns.get(r).toCharArray();
+
         }
 
-        ArrayList<Character> done = new ArrayList<>();
-        for (int ci = 0; ci < _c; ci++) {
-            for (int ri = 0; ri < _r; ri++) {
-                char s = junk[ri][ci];
-                if (s != '?' && !done.contains(s)) {
-
-                    int top = ri;
-                    int bottom = ri;
-                    int left = ci;
-                    int right = ci;
-
-                    while (true) {
-                        if (top == 0)
-                            break;
-                        boolean stop = false;
-                        for (int k = left; k <= right; k++) {
-                            if (junk[top - 1][k] != '?') {
-                                stop = true;
-                                break;
-                            }
-                        }
-                        if (stop)
-                            break;
-                        top--;
-                        for (int k = left; k <= right; k++) {
-                            junk[top][k] = s;
-                        }
-                    }
-
-                    while (true) {
-                        if (bottom == _r - 1)
-                            break;
-                        boolean stop = false;
-                        for (int k = left; k <= right; k++) {
-                            if (junk[bottom + 1][k] != '?') {
-                                stop = true;
-                                break;
-                            }
-                        }
-                        if (stop)
-                            break;
-                        bottom++;
-                        for (int k = left; k <= right; k++) {
-                            junk[bottom][k] = s;
-                        }
-                    }
-
-                    while (true) {
-                        if (left == 0)
-                            break;
-                        boolean stop = false;
-                        for (int k = top; k <= bottom; k++) {
-                            if (junk[k][left - 1] != '?') {
-                                stop = true;
-                                break;
-                            }
-                        }
-                        if (stop)
-                            break;
-                        left--;
-                        for (int k = top; k <= bottom; k++) {
-                            junk[k][left] = s;
-                        }
-                    }
-
-                    while (true) {
-                        if (right == _c - 1)
-                            break;
-                        boolean stop = false;
-                        for (int k = top; k <= bottom; k++) {
-                            if (junk[k][right + 1] != '?') {
-                                stop = true;
-                                break;
-                            }
-                        }
-                        if (stop)
-                            break;
-                        right++;
-                        for (int k = top; k <= bottom; k++) {
-                            junk[k][right] = s;
-                        }
-                    }
-                    done.add(s);
+        for (int r = 0; r < R; r++) {
+            for (int c = 0; c < C; c++) {
+                if (field[r][c] != '?') {
+                    expand(field, r, c);
                 }
             }
         }
+
+        expand(field);
+
         List<String> result = new ArrayList<>();
-        for (int k = 0; k < _r; k++) {
-            result.add(new String(junk[k]));
-        }
+        for (int i = 0; i < _r; i++)
+            result.add(String.valueOf(field[i]));
 
         return result;
+}
+
+
+    private static void expand(char[][] field, int r, int c) {
+        char kid = field[r][c];
+
+
+        for (int i = c + 1; i < field[r].length && field[r][i] == '?'; i++) {
+            field[r][i] = kid;
+        }
+
+        for (int i = c - 1; i >= 0 && field[r][i] == '?'; i--) {
+            field[r][i] = kid;
+        }
+
+
     }
+
+    private static void expand(char[][] field) {
+        for (int i = 0; i < field.length; i++) {
+            if (field[i][0] == '?') {
+                if (i > 0) {
+                    field[i] = field[i - 1];
+                }
+            }
+        }
+        for (int i = field.length - 1; i >= 0; i--) {
+            if (field[i][0] == '?') {
+                field[i] = field[i + 1];
+            }
+        }
+    }
+
 }

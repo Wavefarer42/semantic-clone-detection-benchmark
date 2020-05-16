@@ -1,5 +1,7 @@
 package at.jku.isse.harness
 
+import java.lang.reflect.Method
+
 object R1AB {
     data class Request(val n: Int, val p: Int, val ingredientQuantities: IntArray, val packages: Array<IntArray>)
 
@@ -7,9 +9,10 @@ object R1AB {
     const val resourceFile = "R1AB0.txt"
     const val packagePrefix = "google.jam.r1AB"
     const val runMethod = "run"
+    val targetMethodTypes = arrayOf(Int::class.java, Int::class.java, IntArray::class.java, Array<IntArray>::class.java)
 
-    fun loadData(): List<Request> {
-        return Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
+    val requests: List<Request> by lazy {
+        Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
             val inputs = stream.reader()
                     .readLines()
                     .drop(1)
@@ -34,18 +37,17 @@ object R1AB {
         }
     }
 
+    fun targets(devs: List<String>): List<Method> {
+        return devs.map {
+            val clazz = Class.forName("${packagePrefix}.$it")
+            clazz.getDeclaredMethod(runMethod, *targetMethodTypes)
+        }
+    }
+
     fun run(devs: List<String> = this.allDevs) {
-        val requests = loadData()
-
-        devs.forEach { dev ->
-            val clazz = Class.forName("$packagePrefix.$dev")
-            val runMethod = clazz.getDeclaredMethod(
-                    runMethod,
-                    requests[0].n::class.java, requests[0].p::class.java, requests[0].ingredientQuantities::class.java, requests[0].packages::class.java
-            )
-
+        targets(devs).forEach { target ->
             requests.forEach {
-                runMethod.invoke(null, it.n, it.p, it.ingredientQuantities, it.packages)
+                target.invoke(null, it.n, it.p, it.ingredientQuantities, it.packages)
             }
         }
     }
