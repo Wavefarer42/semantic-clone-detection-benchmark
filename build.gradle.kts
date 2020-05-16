@@ -39,7 +39,7 @@ dependencies {
 
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.name
+        kotlinOptions.jvmTarget = "1.8"
     }
     withType<Test> {
         useJUnitPlatform()

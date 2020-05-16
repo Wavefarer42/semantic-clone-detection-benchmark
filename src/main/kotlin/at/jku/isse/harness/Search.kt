@@ -3,9 +3,10 @@ package at.jku.isse.harness
 object Search {
     data class Request(val list: List<Int>)
 
-    private const val size = 1000
-    private const val packagePrefix = "at.jku.isse.search"
-    private const val runMethod = "run"
+    val allDevs = (0..1).map { "Dev$it" }
+    const val size = 1000
+    const val packagePrefix = "at.jku.isse.search"
+    const val runMethod = "run"
 
     fun loadData(): List<Request> {
         val sampler = Generator.uniform(0, 20)
@@ -14,11 +15,11 @@ object Search {
         }
     }
 
-    fun run(devs: IntRange = 0..10) {
+    fun run(devs: List<String> = this.allDevs) {
         val requests = loadData()
 
-        for (i in devs) {
-            val clazz = Class.forName("$packagePrefix.Dev$i")
+        devs.forEach { dev ->
+            val clazz = Class.forName("$packagePrefix.$dev")
             val runMethod = clazz.getDeclaredMethod(runMethod, requests[0].list::class.java)
 
             requests.forEach {
