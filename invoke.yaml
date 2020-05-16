@@ -1,0 +1,5 @@
+dataset:
+  - name: Google Code Jam 2017
+    file_source: 2017-gcj-source.csv.gz
+    file_input: 2017-gcj-input.csv.gz
+    action: gcj

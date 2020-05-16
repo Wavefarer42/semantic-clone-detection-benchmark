@@ -5,33 +5,65 @@ import re
 import shutil
 import subprocess
 
+import inquirer
+import numpy as np
 import pandas as pd
 from invoke import task
 
 DIR_THIS = pathlib.Path(__file__).parent
+DIR_DATA = pathlib.Path(DIR_THIS, "data")
 DIR_BUILD = pathlib.Path(DIR_THIS, "build")
-FILE_INPUT = pathlib.Path(DIR_THIS, "gcj2017-input.csv.gz")
-FILE_SOURCE = pathlib.Path(DIR_THIS, "gcj2017-source.csv.gz")
+FILE_INPUT = pathlib.Path(DIR_THIS, "2017-gcj-input.csv.gz")
+FILE_SOURCE = pathlib.Path(DIR_THIS, "2017-gcj-source.csv.gz")
 FILE_GRADIENT_AGENT = pathlib.Path(DIR_THIS, "lib/gradient-client-jvm-0.1.0-all.jar")
 KEY_COLUMNS = ["Round", "Category", "Task", "Solution"]
 
 
-@task(name="source", default=True)
-def source_extract(c, round=None, category=None, task=None, solution=None, dev=None, max=100000, per_task=True, seed=14):
-    assert max > 0
-    df_source = pd.read_csv(FILE_SOURCE)
-    df_input = pd.read_csv(FILE_INPUT)
+@task(name="sourcei", default=True)
+def source_extract_interactive(c):
+    datasets = {it["name"]: it for it in c.config["dataset"]}
+    questions = [inquirer.List("dataset", "Which dataset?", sorted(datasets.keys()), carousel=True)]
+    dataset_key = inquirer.prompt(questions)["dataset"]
 
+    dataset = datasets[dataset_key]
+    actions = {
+        "gcj": _source_gcj
+    }
+
+    actions[dataset["action"]](dataset)
+
+
+def _source_gcj(dataset):
+    df_source = pd.read_csv(DIR_DATA.joinpath(dataset["file_source"]))
+    df_input = pd.read_csv(DIR_DATA.joinpath(dataset["file_input"]))
+
+    rounds = np.unique(df_source.Round).tolist()
+    categories = np.unique(df_source.Category).tolist()
+    tasks = np.unique(df_source.Task).tolist()
+    solutions = np.unique(df_source.Solution).tolist()
+
+    questions = [inquirer.List("round", "Which rounds?", rounds),
+                 inquirer.List("category", "Which categories?", categories),
+                 inquirer.List("task", "Which tasks?", tasks),
+                 inquirer.List("solution", "Which solutions?", solutions)]
+    answer = inquirer.prompt(questions)
+
+    _source_extract(df_source, df_input, answer["round"], answer["category"], answer["task"], answer["solution"])
+
+
+@task(name="source")
+def source_extract(c, round=None, category=None, task=None, solution=None, dev=None):
+    df_source = pd.read_csv(DIR_DATA.joinpath(FILE_SOURCE))
+    df_input = pd.read_csv(FILE_INPUT.joinpath(FILE_INPUT))
+
+    _source_extract(df_source, df_input, round, category, task, solution)
+
+
+def _source_extract(df_source, df_input, round=None, category=None, task=None, solution=None, dev=None):
     df_source = _source_filter(df_source, round, category, task, solution, dev)
     df_input = _source_filter(df_input, round, category, task, solution, dev).set_index(KEY_COLUMNS)
 
     if df_source.shape[0] > 0:
-        if per_task:
-            df_source = (df_source.groupby(KEY_COLUMNS)
-                         .apply(lambda x: x.sample(min(max, len(x)), random_state=seed)))
-        else:
-            df_source = df_source.sample(max, random_state=seed)
-
         groupby_getter = operator.attrgetter(*KEY_COLUMNS)
         for groupby_key, rows in itertools.groupby(df_source.itertuples(), groupby_getter):
             key = "-".join([str(it) for it in groupby_key])
