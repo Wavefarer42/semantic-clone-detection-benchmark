@@ -1,0 +1,18 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="at.jku.isse.clones.harness.Math" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.R0AA" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.R0AB" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.R0AC" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.R1AA" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.R1AB" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.Search" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.Sort" level="DEBUG"/>
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

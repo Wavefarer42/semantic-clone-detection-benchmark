@@ -4,7 +4,7 @@ import pathlib
 import re
 import shutil
 import subprocess
-
+import time
 import inquirer
 import numpy as np
 import pandas as pd
@@ -155,3 +155,27 @@ def run(c, round=None, category=None, task=None, solution=None, developer=None):
 @task
 def clean(c):
     shutil.rmtree(DIR_BUILD, ignore_errors=True)
+
+@task
+def evaluate(c):
+    """
+    Runs all the project benchmarks and applies the given tag in the evaluation.
+    """
+
+    time_start = time.time()
+    cmd_clean = f"./gradlew clean"
+    cmd_code = f"./gradlew --rerun-tasks --no-build-cache codeAnalysis"
+    cmd_assemble = f"./gradlew  --rerun-tasks --no-build-cache assemble"
+    cmd_run = f"./gradlew run"
+
+    with c.cd(str(DIR_THIS.absolute())):
+        print(f"Cmd: {cmd_clean}")
+        c.run(cmd_clean, warn=True)
+        print(f"Cmd: {cmd_code}")
+        c.run(cmd_code, warn=True)
+        print(f"Cmd: {cmd_assemble}")
+        c.run(cmd_assemble, warn=True)
+        print(f"Cmd: {cmd_run}")
+        c.run(cmd_run, warn=True)
+
+    print(f"Finished in {(time.time() - time_start) / 60} minutes")

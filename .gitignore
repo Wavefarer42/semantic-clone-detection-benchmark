@@ -2,3 +2,5 @@
 build/
 env-gradient-dataset-clones
 .gradle
+**/*gcache.json
+**/*DynamicObservableWeaver
