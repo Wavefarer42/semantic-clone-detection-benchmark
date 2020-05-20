@@ -10,7 +10,7 @@ class R1ABTest : StringSpec({
         R1AB.run()
     }
 
-    "equal results".config(enabled = false){
+    "equal results"{
         val result = R1AB.targets(R1AB.allDevs).map { target ->
             val results = R1AB.requests.map {
                 target.invoke(null, it.n, it.p, it.ingredientQuantities, it.packages)

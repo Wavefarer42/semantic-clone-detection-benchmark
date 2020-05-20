@@ -24,12 +24,7 @@ class R1BATest : StringSpec({
 
             (it.second zip result[0].second)
                     .forEach {
-                        try{
-
-                            kotlin.math.abs(it.first as Float - it.second as Float) shouldBeLessThan 0.01f
-                        }catch (ex:Throwable){
-                            print(ex)
-                        }
+                        kotlin.math.abs(it.first as Float - it.second as Float) shouldBeLessThan 0.01f
                     }
         }
     }

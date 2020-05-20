@@ -5,10 +5,14 @@ channels:
   - defaults
 dependencies:
   - _libgcc_mutex=0.1=main
+  - beautifulsoup4=4.9.0=py36_0
   - blas=1.0=mkl
   - blessings=1.7=py36h9f0ad1d_1001
   - ca-certificates=2020.1.1=0
   - certifi=2020.4.5.1=py36_0
+  - cffi=1.14.0=py36he30daa8_1
+  - cryptography=2.9.2=py36h1ba5d50_0
+  - idna=2.9=py_1
   - inquirer=2.6.3=py_0
   - intel-openmp=2020.1=217
   - invoke=1.4.1=py_0
@@ -28,6 +32,9 @@ dependencies:
   - openssl=1.1.1g=h7b6447c_0
   - pandas=0.25.3=py36he6710b0_0
   - pip=20.0.2=py36_3
+  - pycparser=2.20=py_0
+  - pyopenssl=19.1.0=py36_0
+  - pysocks=1.7.1=py36_0
   - python=3.6.10=h7579374_2
   - python-dateutil=2.8.1=py_0
   - python-editor=1.0.4=py_0
@@ -35,10 +42,13 @@ dependencies:
   - pytz=2020.1=py_0
   - readchar=2.0.0=py_0
   - readline=8.0=h7b6447c_0
-  - setuptools=46.2.0=py36_0
+  - selenium=3.141.0=py36h7b6447c_0
+  - setuptools=46.4.0=py36_0
   - six=1.14.0=py36_0
+  - soupsieve=2.0=py_0
   - sqlite=3.31.1=h62c20be_1
   - tk=8.6.8=hbc83047_0
+  - urllib3=1.25.8=py36_0
   - wheel=0.34.2=py36_0
   - xz=5.2.5=h7b6447c_0
   - zlib=1.2.11=h7b6447c_3

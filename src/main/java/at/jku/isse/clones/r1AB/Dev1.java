@@ -1,97 +1,95 @@
 package at.jku.isse.clones.r1AB;
 
+import java.util.PriorityQueue;
+
 /**
- * @author 0phi
+ * @author chavit92
  */
 public class Dev1 {
     public static int run(int _ingredientsCount, int _packagesCount, int[] _ingredientQuantities, int[][] _packages) {
+        int n = _ingredientsCount;
+        int m = _packagesCount;
 
-        int numberOfIngredients = _ingredientsCount;
-        int numberOfPackages = _packagesCount;
+        int ans = 0;
 
-        int[] quantityOfIngredientsNeeded = _ingredientQuantities;
+        PriorityQueue<Integer>[] a = new PriorityQueue[n];
 
-        int[][] ingredientsToPackageWeight = _packages;
+        long[] cost = new long[n];
 
+        for (int i = 0; i < n; i++)
+        {
+            cost[i] = _ingredientQuantities[i];
+        }
 
-        // Update max count
-        for (int ingredient = 0; ingredient < numberOfIngredients; ingredient++) {
-            for (int pkg = 0; pkg < numberOfPackages; pkg++) {
+        for (int i = 0; i < n; i++)
+        {
+            a[i] = new PriorityQueue<Integer>();
+            for (int j = 0; j < m; j++)
+            {
+                a[i].add(_packages[i][j]);
+            }
+        }
 
-                if (ingredientsToPackageWeight[ingredient][pkg] % quantityOfIngredientsNeeded[ingredient]
-                        != 0) {
+        boolean shouldAdd = true;
 
-                    int temp =
-                            ingredientsToPackageWeight[ingredient][pkg] / quantityOfIngredientsNeeded[ingredient];
+        int[] presenters = new int[n];
 
-                    if (((
-                            ingredientsToPackageWeight[ingredient][pkg] - (quantityOfIngredientsNeeded[ingredient]
-                                    * (temp + 1) * 0.9)) >= 0) && ((
-                            ingredientsToPackageWeight[ingredient][pkg] - (quantityOfIngredientsNeeded[ingredient]
-                                    * (temp + 1) * 1.1)) <= 0)) {
-                        ingredientsToPackageWeight[ingredient][pkg] = temp + 1;
-                    } else if (((
-                            ingredientsToPackageWeight[ingredient][pkg] - (quantityOfIngredientsNeeded[ingredient]
-                                    * (temp) * 0.9)) >= 0) && ((
-                            ingredientsToPackageWeight[ingredient][pkg] - (quantityOfIngredientsNeeded[ingredient]
-                                    * (temp) * 1.1)) <= 0)) {
-                        ingredientsToPackageWeight[ingredient][pkg] = temp;
-                    } else {
-                        ingredientsToPackageWeight[ingredient][pkg] = -2;
+        while (true)
+        {
+            if (shouldAdd)
+            {
+                shouldAdd = false;
+                for (int i = 0; i < n; i++)
+                {
+                    if (a[i].size() == 0)
+                    {
+                        return ans;
                     }
-                } else {
-                    ingredientsToPackageWeight[ingredient][pkg] =
-                            ingredientsToPackageWeight[ingredient][pkg] / quantityOfIngredientsNeeded[ingredient];
+                    presenters[i] = a[i].poll();
                 }
             }
-        }
 
-        int total = 0;
-        for (int pkg = 0; pkg < numberOfPackages; pkg++) {
-            if (ingredientsToPackageWeight[0][pkg] != -2 &&
-                    ifAllPresent(numberOfIngredients, numberOfPackages, ingredientsToPackageWeight[0][pkg],
-                            ingredientsToPackageWeight)) {
-                total++;
+            int minP = 0, maxP = 0;
 
-                resetAll(numberOfIngredients, numberOfPackages, ingredientsToPackageWeight[0][pkg],
-                        ingredientsToPackageWeight);
-                ingredientsToPackageWeight[0][pkg] = -1;
+            for (int i = 0; i < n; i++)
+            {
+                if (presenters[i]*cost[minP] < presenters[minP]*cost[i])
+                {
+                    minP = i;
+                }
+                if (presenters[i]*cost[maxP] > presenters[maxP]*cost[i])
+                {
+                    maxP = i;
+                }
             }
-        }
 
-        return total;
-    }
+            int cand = 100+(int)(Math.round(presenters[maxP]/cost[maxP]/1.1));
 
-    private static boolean resetAll(int rows, int columns, int value, int[][] content) {
-        for (int r = 1; r < rows; r++) {
-            int res = isPresent(r, columns, value, content);
-
-            content[r][res] = -1;
-        }
-
-        return true;
-    }
-
-    private static boolean ifAllPresent(int rows, int columns, int value, int[][] content) {
-        for (int r = 1; r < rows; r++) {
-            int res = isPresent(r, columns, value, content);
-
-            if (res == -3) {
-                return false;
+            while (cand * cost[maxP] * 110 >= presenters[maxP]*100)
+            {
+                cand--;
             }
-        }
 
-        return true;
-    }
+            cand++;
 
+            boolean isOk =
+                    cand*cost[minP]*90 <= presenters[minP]*100 &&
+                            cand*cost[minP]*110 >= presenters[minP]*100;
 
-    private static int isPresent(int row, int columns, int value, int[][] content) {
-        for (int col = 0; col < columns; col++) {
-            if (content[row][col] == value) {
-                return col;
+            if (isOk)
+            {
+                ans++;
+                shouldAdd = true;
+                continue;
             }
+
+            if (a[minP].size() == 0)
+            {
+                return ans;
+            }
+            presenters[minP] = a[minP].poll();
         }
 
-        return -3;
+
     }
 }

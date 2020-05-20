@@ -8,7 +8,7 @@ object R1BA {
 
     data class Request(val destination: Int, val positionCount: Int, val initialPosition: IntArray, val speed: IntArray)
 
-    val allDevs = (8..9).map { "Dev$it" }
+    val allDevs = (0..9).map { "Dev$it" }
     const val resourceFile = "R1BA0.txt"
     const val packagePrefix = "at.jku.isse.clones.r1BA"
     const val runMethod = "run"

@@ -5,6 +5,7 @@ import re
 import shutil
 import subprocess
 import time
+
 import inquirer
 import numpy as np
 import pandas as pd
@@ -38,30 +39,29 @@ def _source_gcj(dataset):
     df_input = pd.read_csv(DIR_DATA.joinpath(dataset["file_input"]))
 
     rounds = np.unique(df_source.Round).tolist()
-    categories = np.unique(df_source.Category).tolist()
-    tasks = np.unique(df_source.Task).tolist()
-    solutions = np.unique(df_source.Solution).tolist()
+    categories = np.unique(df_source[df_source.Round.isin(rounds)].Category).tolist()
+    tasks = np.unique(df_source[df_source.Round.isin(rounds) & df_source.Category.isin(categories)].Task).tolist()
 
     questions = [inquirer.List("round", "Which rounds?", rounds),
                  inquirer.List("category", "Which categories?", categories),
                  inquirer.List("task", "Which tasks?", tasks),
-                 inquirer.List("solution", "Which solutions?", solutions)]
+                 inquirer.Text("minimum", "Minimum Score?", "0")]
     answer = inquirer.prompt(questions)
 
-    _source_extract(df_source, df_input, answer["round"], answer["category"], answer["task"], answer["solution"])
+    _source_extract(df_source, df_input, answer["round"], answer["category"], answer["task"], 0, int(answer["minimum"]))
 
 
 @task(name="source")
-def source_extract(c, round=None, category=None, task=None, solution=None, dev=None):
+def source_extract(c, round=None, category=None, task=None, solution=None):
     df_source = pd.read_csv(DIR_DATA.joinpath(FILE_SOURCE))
     df_input = pd.read_csv(FILE_INPUT.joinpath(FILE_INPUT))
 
     _source_extract(df_source, df_input, round, category, task, solution)
 
 
-def _source_extract(df_source, df_input, round=None, category=None, task=None, solution=None, dev=None):
-    df_source = _source_filter(df_source, round, category, task, solution, dev)
-    df_input = _source_filter(df_input, round, category, task, solution, dev).set_index(KEY_COLUMNS)
+def _source_extract(df_source, df_input, round=None, category=None, task=None, solution=None, score=None):
+    df_source = _source_filter(df_source, round, category, task, solution, score)
+    df_input = _source_filter(df_input, round, category, task, solution, score).set_index(KEY_COLUMNS)
 
     if df_source.shape[0] > 0:
         groupby_getter = operator.attrgetter(*KEY_COLUMNS)
@@ -85,7 +85,7 @@ def _source_extract(df_source, df_input, round=None, category=None, task=None, s
               f"round={round}, category={category}, task={task}, solution={solution}")
 
 
-def _source_filter(df, round, category, task, solution, dev=None) -> pd.DataFrame:
+def _source_filter(df, round, category, task, solution, score=None) -> pd.DataFrame:
     if round is not None:
         df = df[df.Round == round]
     if category is not None:
@@ -94,8 +94,8 @@ def _source_filter(df, round, category, task, solution, dev=None) -> pd.DataFram
         df = df[df.Task == task]
     if solution is not None:
         df = df[df.Solution == solution]
-    if dev is not None and "Developer" in df.columns:
-        df = df[df.Developer == dev]
+    if score is not None and "Score" in df.columns:
+        df = df[df.Score >= score]
     return df
 
 
@@ -155,6 +155,7 @@ def run(c, round=None, category=None, task=None, solution=None, developer=None):
 @task
 def clean(c):
     shutil.rmtree(DIR_BUILD, ignore_errors=True)
+
 
 @task
 def evaluate(c):

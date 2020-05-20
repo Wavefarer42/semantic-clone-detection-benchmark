@@ -3,6 +3,9 @@ package at.jku.isse.clones.r1AB;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * @author alexrcoleman
+ */
 public class Dev8 {
     public static int run(int _ingredientsCount, int _packagesCount, int[] _ingredientQuantities, int[][] _packages) {
 
