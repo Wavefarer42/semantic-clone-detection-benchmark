@@ -2,7 +2,7 @@ plugins {
     id("idea")
     kotlin("jvm") version "1.3.72"
     application
-//    id("at.jku.isse.gradient-gradle-plugin") version "0.8.6"
+    id("at.jku.isse.gradient-gradle-plugin") version "0.8.6"
 }
 
 group = "at.jku.isse"
@@ -55,8 +55,8 @@ application {
     mainClassName = "at.jku.isse.clones.harness.MainKt"
 }
 
-//gradient {
-//    groupName.set("at.jku.isse")
-//    projectName.set("semantic-clones")
-//    includes.set("at.jku.isse.clones..*")
-//}
+gradient {
+    groupName.set("at.jku.isse")
+    projectName.set("semantic-clones")
+    includes.set("at.jku.isse.clones..*")
+}

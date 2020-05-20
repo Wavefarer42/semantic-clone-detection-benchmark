@@ -1,121 +1,124 @@
 package at.jku.isse.clones.r1AC;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * @author Me.
+ * @author mikhailOK
  */
 public class Dev9 {
 
     public static int run(int _hd, int _ad, int _hk, int _ak, int _b, int _d) {
-        int dragonMax = _hd;
-        int dragonAttack = _ad;
-        int knightMax = _hk;
-        int knightAttack = _ak;
-        int buff = _b;
-        int debuff = _d;
-
-        PriorityQueue<State> pq = new PriorityQueue<>();
-        pq.add(new State(dragonMax, knightMax, dragonAttack, knightAttack, 0, new ArrayList<>()));
-
         Set<State> visited = new HashSet<>();
-
-        while(pq.size() > 0) {
-            State s = pq.poll();
-
-            if (visited.contains(s)) continue;
-            visited.add(s);
-
-            //System.err.println(s);
-            if (s.kH <= 0) return s.moves;
-
-            // Attack
-            int nKH = s.kH - s.dA;
-            int ndH = s.dH;
-            if (nKH > 0)
-                ndH -= s.kA;
-            if (ndH > 0) {
-                List<String> actions = new ArrayList<>(s.actions);
-                actions.add("Attack");
-                pq.add(new State(ndH, nKH, s.dA, s.kA, s.moves + 1, actions));
+        List<State> queue = new ArrayList<>();
+        List<State> next = new ArrayList<>();
+        State initial = new State(_hd, _ad, _hk, _ak);
+        queue.add(initial);
+        visited.add(initial);
+        int rounds = 1;
+        while (!queue.isEmpty()) {
+            for (State state : queue) {
+                if (state.haveWon()) {
+                    return rounds;
+                }
             }
-
-            // Buff
-            int ndA = s.dA + buff;
-            ndH = s.dH - s.kA;
-            if (ndH > 0) {
-                List<String> actions = new ArrayList<>(s.actions);
-                actions.add("Buff");
-                pq.add(new State(ndH, s.kH, ndA, s.kA, s.moves+1, actions));
+            for (State state : queue) {
+                for (State to : new State[]{state.attack(), state.heal(_hd), state.buff(_b), state.debuff(_d)}) {
+                    if (to == null) {
+                        continue;
+                    }
+                    if (visited.add(to)) {
+                        next.add(to);
+                    }
+                }
             }
-
-            // Cure
-            ndH = dragonMax - s.kA;
-            if (ndH > 0) {
-                List<String> actions = new ArrayList<>(s.actions);
-                actions.add("Cure");
-                pq.add(new State(ndH, s.kH, s.dA, s.kA, s.moves+1, actions));
-            }
-
-            // Debuff
-            int nkA = Math.max(0, s.kA - debuff);
-            ndH = s.dH - nkA;
-            if (ndH > 0) {
-                List<String> actions = new ArrayList<>(s.actions);
-                actions.add("Debuff");
-                pq.add(new State(ndH, s.kH, s.dA, nkA, s.moves+1, actions));
-            }
+            queue.clear();
+            List<State> t = queue;
+            queue = next;
+            next = t;
+            rounds++;
         }
-
         return -1;
     }
 
-    static class State implements Comparable<State> {
-        int dH;
-        int kH;
-        int dA;
-        int kA;
-        int moves;
+    static class State {
+        int hd;
+        int ad;
+        int hk;
+        int ak;
 
-        List<String> actions;
-
-
-        State(int dH, int kH, int dA, int kA, int moves, List<String> actions) {
-            this.dH = dH;
-            this.kH = kH;
-            this.dA = dA;
-            this.kA = kA;
-            this.moves = moves;
-            this.actions = actions;
+        public State(int hd, int ad, int hk, int ak) {
+            this.hd = hd;
+            this.ad = ad;
+            this.hk = hk;
+            this.ak = ak;
         }
 
-        @Override
-        public int compareTo(State o) {
-            int myDist = moves; //+ (kH+dA-1) / dA;
-            int oDist = o.moves; //+ (o.kH + o.dA-1) / o.dA;
-            return myDist - oDist;
+        boolean haveWon() {
+            return ad >= hk;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof State) {
-                State s = (State) o;
-                return dH == s.dH && kH == s.kH && dA == s.dA && kA == s.kA;
+        State buff(int buff) {
+            if (ak >= hd) {
+                return null;
             }
-
-            return false;
+            return new State(hd - ak, ad + buff, hk, ak);
         }
 
-        @Override
+        State debuff(int debuff) {
+            int newAk = Math.max(0, ak - debuff);
+            if (newAk >= hd) {
+                return null;
+            }
+            return new State(hd - newAk, ad, hk, newAk);
+        }
+
+        State heal(int hp) {
+            if (ak >= hp) {
+                return null;
+            }
+            return new State(hp - ak, ad, hk, ak);
+        }
+
+        State attack() {
+            if (ak >= hd) {
+                return null;
+            }
+            return new State(hd - ak, ad, hk - ad, ak);
+        }
+
+
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            State state = (State) o;
+
+            if (hd != state.hd) return false;
+            if (ad != state.ad) return false;
+            if (hk != state.hk) return false;
+            return ak == state.ak;
+        }
+
+
         public int hashCode() {
-            return dH * 1000000 + kH * 10000 + dA * 100 + kA;
+            int result = hd;
+            result = 31 * result + ad;
+            result = 31 * result + hk;
+            result = 31 * result + ak;
+            return result;
         }
 
-        @Override
+
         public String toString() {
-            return "HP: " + dH + " vs " + kH + " ATK: " + dA + " vs " + kA + ":" + actions;
+            return "State{" +
+                    "hd=" + hd +
+                    ", ad=" + ad +
+                    ", hk=" + hk +
+                    ", ak=" + ak +
+                    '}';
         }
-    }
 
+    }
 }
 
