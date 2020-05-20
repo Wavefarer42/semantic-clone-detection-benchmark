@@ -38,6 +38,7 @@ object R0AC {
             requests.forEach {
                     target.invoke(null, it.l, it.r)
                 }
+            logger.debug { "Finished $target" }
         }
     }
 }

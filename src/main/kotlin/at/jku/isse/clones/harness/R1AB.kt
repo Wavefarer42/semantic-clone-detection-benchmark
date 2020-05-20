@@ -55,6 +55,7 @@ object R1AB {
             requests.forEach {
                 target.invoke(null, it.n, it.p, it.ingredientQuantities, it.packages)
             }
+            logger.debug { "Finished $target" }
         }
     }
 }

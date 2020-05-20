@@ -56,6 +56,7 @@ object R1BA {
             requests.forEach {
                 target.invoke(null, it.destination, it.positionCount, it.initialPosition, it.speed)
             }
+            logger.debug { "Finished $target" }
         }
     }
 }

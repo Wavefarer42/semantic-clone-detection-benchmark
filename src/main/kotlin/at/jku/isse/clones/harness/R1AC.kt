@@ -40,6 +40,7 @@ object R1AC {
             requests.forEach {
                 target.invoke(null, it.hd, it.ad, it.hk, it.ak, it.b, it.d)
             }
+            logger.debug { "Finished $target" }
         }
     }
 

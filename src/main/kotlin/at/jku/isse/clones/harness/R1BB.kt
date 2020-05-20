@@ -41,6 +41,7 @@ object R1BB {
             requests.forEach {
                 target.invoke(null, it.n, it.colors)
             }
+            logger.debug { "Finished $target" }
         }
     }
 }

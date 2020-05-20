@@ -20,7 +20,6 @@ public class Dev8 {
         }
 
         double annie_speed = distance / slowest_time;
-        System.out.println(annie_speed);
 
         return (float) annie_speed;
     }
