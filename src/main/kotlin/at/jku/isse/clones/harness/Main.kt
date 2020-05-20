@@ -10,9 +10,13 @@ fun main() {
     R0AA.run()
     R0AB.run()
     R0AC.run()
+
     R1AA.run()
     R1AB.run()
 //    R1AC.run() // extreme runtime
+
+
     R1BA.run()
+
     logger.debug { "Finished running clone classes" }
 }
