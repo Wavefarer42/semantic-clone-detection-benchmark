@@ -8,7 +8,7 @@ object Math {
 
     data class Request(val num: Int)
 
-    val allDevs = (0..9).map { "Dev$it" }
+    val allDevs = (0..3).map { "Dev$it" }
     const val size = 1000
     const val packagePrefix = "at.jku.isse.clones.math"
     const val runMethod = "run"

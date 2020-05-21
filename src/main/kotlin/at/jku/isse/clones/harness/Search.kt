@@ -12,7 +12,7 @@ object Search {
     const val size = 1000
     const val packagePrefix = "at.jku.isse.clones.search"
     const val runMethod = "run"
-    val targetMethodTypes = arrayOf(List::class.java)
+    val targetMethodTypes = arrayOf(Int::class.java, List::class.java)
 
     val requests: List<Request> by lazy {
         val sampler = Generator.uniform(0, 20)
