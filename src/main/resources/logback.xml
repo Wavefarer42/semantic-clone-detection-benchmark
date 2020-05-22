@@ -16,6 +16,8 @@
     <logger name="at.jku.isse.clones.harness.R1BB" level="DEBUG"/>
     <logger name="at.jku.isse.clones.harness.R1CA" level="DEBUG"/>
     <logger name="at.jku.isse.clones.harness.R1CB" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.R1CC" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.R2AA" level="DEBUG"/>
     <logger name="at.jku.isse.clones.harness.Search" level="DEBUG"/>
     <logger name="at.jku.isse.clones.harness.Sort" level="DEBUG"/>
     <root level="info">
