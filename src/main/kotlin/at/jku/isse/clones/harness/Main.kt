@@ -23,5 +23,7 @@ fun main() {
     R1CA.run()
     R1CB.run()
     R1CC.run()
+
+    R2AA.run()
     logger.debug { "Finished running clone classes" }
 }
