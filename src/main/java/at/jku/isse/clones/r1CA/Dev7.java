@@ -1,66 +1,58 @@
 package at.jku.isse.clones.r1CA;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
- * @author ferr
+ * @author hyphensarethebest
  */
 public class Dev7 {
 
     public static double run(int _n, int _k, int[] _r, int[] _h) {
-        int n = _n, k = _k;
-        Pancake[] pkc = new Pancake[n];
-        for (int i = 0; i < n; ++i) {
-            pkc[i] = new Pancake(_r[i], _h[i]);
+        int n = _n;
+        int k = _k;
+        ArrayList<Long> product = new ArrayList<Long>();
+        HashMap<Long, ArrayList<Long>> productToRadius = new HashMap<Long, ArrayList<Long>>();
+        for (int i = 0; i < n; i++) {
+//            line = in.nextLine();
+//            sc = new Scanner(line);
+            long r = _r[i];
+            long h = _h[i];
+            product.add(r * h);
+            if (productToRadius.containsKey(r * h)) {
+                productToRadius.get(r * h).add(r);
+            } else {
+                ArrayList<Long> temp = new ArrayList<Long>();
+                temp.add(r);
+                productToRadius.put(r * h, temp);
+            }
+
         }
-        Arrays.sort(pkc);
-        int maxRId = 0;
-        for (int i = 0; i < n; ++i) {
-            if (pkc[i].R > pkc[maxRId].R) {
-                maxRId = i;
+        for (long key : productToRadius.keySet()) {
+            Collections.sort(productToRadius.get(key));
+        }
+        Collections.sort(product);
+        long[] radius = new long[n];
+        for (int i = 0; i < n; i++) {
+            ArrayList<Long> temp = productToRadius.get(product.get(i));
+            long curr = temp.get(0);
+            temp.remove(0);
+            radius[i] = curr;
+        }
+        long maxRadius = 0;
+        long total = 0;
+        for (int i = 0; i < k - 1; i++) {
+            total += (2L * product.get(n - 1 - i));
+            if (radius[n - 1 - i] > maxRadius) {
+                maxRadius = radius[n - 1 - i];
             }
         }
-        double ans = calc(pkc, k);
-        Pancake tmp = pkc[maxRId];
-        pkc[maxRId] = pkc[k - 1];
-        pkc[k - 1] = tmp;
-        double ans2 = calc(pkc, k);
-        ans = Math.max(ans, ans2);
-
-        return ans;
-    }
-
-    private static class Pancake implements Comparable<Pancake> {
-        public final int R;
-        public final int H;
-
-        private Pancake(int r, int h) {
-            R = r;
-            H = h;
+        long biggestOtherTerm = 0;
+        for (int i = k - 1; i < n; i++) {
+            long otherTerm = (2L * product.get(n - 1 - i)) + Math.max(maxRadius, radius[n - 1 - i]) * Math.max(maxRadius, radius[n - 1 - i]);
+            biggestOtherTerm = Math.max(biggestOtherTerm, otherTerm);
         }
-
-        @Override
-        public int compareTo(Pancake o) {
-            return -Long.compare(1L * R * H, 1L * o.R * o.H);
-        }
-
-        @Override
-        public String toString() {
-            return "Pancake{" +
-                    "R=" + R +
-                    ", H=" + H +
-                    '}';
-        }
-    }
-
-    private static double calc(Pancake[] pkc, int qty) {
-        double ans = 0;
-        double maxR = 0;
-        for (int i = 0; i < qty; ++i) {
-            ans += Math.PI * 2 * pkc[i].R * pkc[i].H;
-            maxR = Math.max(maxR, pkc[i].R);
-        }
-        ans += Math.PI * maxR * maxR;
-        return ans;
+        return Math.PI * (total + biggestOtherTerm);
     }
 }

@@ -7,7 +7,7 @@ object R0AC {
     private val logger = KotlinLogging.logger{}
     data class Request(val l: Int, val r: Int)
 
-    val allDevs = ((0..5) + (7..9)).map { "Dev$it" }
+    val allDevs = (0..9).map { "Dev$it" }
     const val resourceFile = "R0AC0.txt"
     const val packagePrefix = "at.jku.isse.clones.r0AC"
     const val runMethod = "run"
