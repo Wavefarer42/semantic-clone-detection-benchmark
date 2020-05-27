@@ -6,11 +6,11 @@ import java.util.PriorityQueue;
  * @author
  */
 public class Dev9 {
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
             long N = _l;
             long K = _r;
             long[] res = enter(N, K);
-            return new Result((int) res[0], (int) res[1]);
+            return new int[]{(int) res[0], (int) res[1]};
     }
 
     private static long[] enter(long N, long K) {

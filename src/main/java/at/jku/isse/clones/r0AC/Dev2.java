@@ -4,7 +4,7 @@ package at.jku.isse.clones.r0AC;
  * @author Cratus
  */
 public class Dev2 {
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
         int n = _l;
         int k = _r;
 
@@ -23,9 +23,9 @@ public class Dev2 {
         }
 
         if (lastSlotSize % 2 == 0) {
-            return new Result(lastSlotSize / 2, (lastSlotSize / 2 - 1));
+            return new int[]{lastSlotSize / 2, (lastSlotSize / 2 - 1)};
         } else {
-            return new Result((lastSlotSize - 1) / 2, (lastSlotSize - 1) / 2);
+            return new int[]{(lastSlotSize - 1) / 2, (lastSlotSize - 1) / 2};
         }
     }
 }

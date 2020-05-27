@@ -4,7 +4,7 @@ package at.jku.isse.clones.r0AC;
  * @author araver
  */
 public class Dev0 {
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
         int i, j, l;
 
         int minS = 0, maxS = 0, indexS = 0, beforeS, afterS;
@@ -135,6 +135,6 @@ public class Dev0 {
         //System.out.println("====================");
 
         //output
-        return new Result(r, l);
+        return new int[]{r, l};
     }
 }

@@ -8,7 +8,7 @@ import java.util.PriorityQueue;
  */
 public class Dev6 {
 
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
         long N = _l;
         long K = _r - 1;
 
@@ -29,7 +29,7 @@ public class Dev6 {
         }
         long x = q.peek();
         if (x % 2 == 1)
-            return new Result((int) x / 2, (int) x / 2);
-        return new Result((int) x / 2, (int) (x / 2 - 1));
+            return new int[]{(int) x / 2, (int) x / 2};
+        return new int[]{(int) x / 2, (int) (x / 2 - 1)};
     }
 }

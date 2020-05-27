@@ -3,7 +3,9 @@ package at.jku.isse.clones.harness
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.doubles.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
+import kotlin.math.absoluteValue
 
 class R0ACTest : StringSpec({
     "should run through"{
@@ -19,9 +21,10 @@ class R0ACTest : StringSpec({
             Pair(targets, results)
         }
 
+        val ref = result[0].second.flatMap{ (it as IntArray).toList()}
         result.forAll {
             it.second shouldHaveSize 100
-            it.second shouldBe result.first().second
+            it.second.flatMap { (it as IntArray).toList() } shouldBe ref
         }
     }
 })

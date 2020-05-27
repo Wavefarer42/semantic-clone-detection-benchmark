@@ -6,7 +6,7 @@ import java.util.PriorityQueue;
  * @author abear888
  */
 public class Dev4 {
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
         int n = _l;
         int k = _r;
         PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
@@ -26,7 +26,7 @@ public class Dev4 {
             if (i == k - 1) {
                 a *= -1;
                 b *= -1;
-                return new Result(Math.max(a, b), Math.min(a, b));
+                return new int[]{Math.max(a, b), Math.min(a, b)};
             }
         }
 

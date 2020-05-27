@@ -6,7 +6,7 @@ import java.util.TreeMap;
  * @author alei
  */
 public class Dev3 {
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
         TreeMap<Long, Long> mp = new TreeMap<>();
         long n = _l;
         long k = _r;
@@ -31,6 +31,6 @@ public class Dev3 {
             mp.put((len + 1) / 2, cur + cnt);
         }
 
-        return new Result((int) maxi, (int) mini);
+        return new int[]{(int) maxi, (int) mini};
     }
 }

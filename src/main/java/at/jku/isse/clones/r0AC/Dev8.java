@@ -8,7 +8,7 @@ import java.util.TreeMap;
  * @author 2001zhaozhao
  */
 public class Dev8 {
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
         long initialsize = _l;
         long numCustomers = _r;
 
@@ -48,7 +48,7 @@ public class Dev8 {
             }
         }
 
-        return new Result(left, right);
+        return new int[]{left, right};
     }
 
     public static void add(TreeMap<Long, Long> map, long key, long value) {

@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Alibi
  */
 public class Dev1 {
-    public static Result run(int _l, int _r) {
+    public static int[] run(int _l, int _r) {
         Map<Integer, Integer> map = new HashMap<>();
         int N = _l;
         int K = _r;
@@ -22,9 +22,9 @@ public class Dev1 {
             if (kLeft <= lsCount) {
                 if (space % 2 == 1) {
                     int leftAndRight = (space - 1) / 2;
-                    return new Result(leftAndRight, leftAndRight);
+                    return new int[]{leftAndRight, leftAndRight};
                 } else {
-                    return new Result((space / 2), ((space / 2) - 1));
+                    return new int[]{(space / 2), ((space / 2) - 1)};
                 }
             }
             kLeft -= lsCount;
