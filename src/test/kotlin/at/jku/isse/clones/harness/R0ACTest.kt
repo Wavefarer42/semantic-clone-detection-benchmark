@@ -1,11 +1,10 @@
 package at.jku.isse.clones.harness
 
+import at.jku.isse.clones.harness.classes.R0AC
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.doubles.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
-import kotlin.math.absoluteValue
 
 class R0ACTest : StringSpec({
     "should run through"{

@@ -1,28 +1,33 @@
-package at.jku.isse.clones.harness
+package at.jku.isse.clones.harness.classes
 
 import mu.KotlinLogging
 import java.lang.reflect.Method
 
-object R0AA {
+object R2AA {
     private val logger = KotlinLogging.logger {}
 
-    data class Request(val pattern: String, val num: Int)
+    data class Request(val n: Int, val p: Int, val g: IntArray)
 
     val allDevs = (0..9).map { "Dev$it" }
-    const val resourceFile = "R0AA0.txt"
-    const val packagePrefix = "at.jku.isse.clones.r0AA"
+    const val resourceFile = "R2AA0.txt"
+    const val packagePrefix = "at.jku.isse.clones.r2AA"
     const val runMethod = "run"
-    val targetMethodTypes = arrayOf(String::class.java, Int::class.java)
+    val targetMethodTypes = arrayOf(Int::class.java, Int::class.java, IntArray::class.java)
 
     val requests: List<Request> by lazy {
         Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
-            stream.reader()
+            val inputs = stream.reader()
                     .readLines()
                     .drop(1)
-                    .map {
-                        val parts = it.split(" ")
-                        Request(parts[0], parts[1].toInt())
-                    }
+
+            val requests = mutableListOf<Request>()
+            var idx = 0
+            while (idx < inputs.size) {
+                val (n, p) = inputs[idx++].split(" ").let { Pair(it[0].toInt(), it[1].toInt()) }
+                val g = inputs[idx++].split(" ").map { it.toInt() }.toIntArray()
+                requests.add(Request(n, p, g))
+            }
+            requests
         }
     }
 
@@ -37,7 +42,7 @@ object R0AA {
         targets(devs).forEach { target ->
             logger.debug { "Running $target" }
             requests.forEach {
-                target.invoke(null, it.pattern, it.num)
+                target.invoke(null, it.n, it.p, it.g)
             }
             logger.debug { "Finished $target" }
         }

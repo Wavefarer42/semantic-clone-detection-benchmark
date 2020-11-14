@@ -1,4 +1,4 @@
-package at.jku.isse.clones.harness
+package at.jku.isse.clones.harness.classes
 
 import mu.KotlinLogging
 import java.lang.reflect.Method

@@ -1,18 +1,18 @@
-package at.jku.isse.clones.harness
+package at.jku.isse.clones.harness.classes
 
 import mu.KotlinLogging
 import java.lang.reflect.Method
 
-object R1AA {
+object R1BA {
     private val logger = KotlinLogging.logger {}
 
-    data class Request(val r: Int, val c: Int, val pattern: List<String>)
+    data class Request(val destination: Int, val positionCount: Int, val initialPosition: IntArray, val speed: IntArray)
 
     val allDevs = (0..9).map { "Dev$it" }
-    const val resourceFile = "R1AA0.txt"
-    const val packagePrefix = "at.jku.isse.clones.r1AA"
+    const val resourceFile = "R1BA0.txt"
+    const val packagePrefix = "at.jku.isse.clones.r1BA"
     const val runMethod = "run"
-    val targetMethodTypes = arrayOf(Int::class.java, Int::class.java, List::class.java)
+    val targetMethodTypes = arrayOf(Int::class.java, Int::class.java, IntArray::class.java, IntArray::class.java)
 
     val requests: List<Request> by lazy {
         Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
@@ -24,17 +24,20 @@ object R1AA {
             var idx = 0
             while (idx < inputs.size) {
                 val testCase = inputs[idx].split(" ")
-                val r = testCase[0].toInt()
-                val c = testCase[1].toInt()
+                val d = testCase[0].toInt()
+                val n = testCase[1].toInt()
+                idx++
 
-                val devs = mutableListOf<String>()
-                for (midx in 0 until r) {
+                val positions = mutableListOf<Int>()
+                val speed = mutableListOf<Int>()
+                repeat(n) {
+                    val entry = inputs[idx].split(" ").map { it.toInt() }
+                    positions.add(entry[0])
+                    speed.add(entry[1])
                     idx++
-                    devs.add(inputs[idx])
                 }
 
-                requests.add(Request(r, c, devs))
-                idx++
+                requests.add(Request(d, n, positions.toIntArray(), speed.toIntArray()))
             }
             requests
         }
@@ -51,7 +54,7 @@ object R1AA {
         targets(devs).forEach { target ->
             logger.debug { "Running $target" }
             requests.forEach {
-                target.invoke(null, it.r, it.c, it.pattern)
+                target.invoke(null, it.destination, it.positionCount, it.initialPosition, it.speed)
             }
             logger.debug { "Finished $target" }
         }

@@ -1,5 +1,6 @@
 package at.jku.isse.clones.harness
 
+import at.jku.isse.clones.harness.classes.R1AA
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.collections.shouldHaveSize

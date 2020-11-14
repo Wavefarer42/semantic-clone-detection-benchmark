@@ -4,22 +4,22 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger name="at.jku.isse.clones.harness.MainKt" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.Math" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R0AA" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R0AB" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R0AC" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R1AA" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R1AB" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R1AC" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R1BA" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.ServiceKt" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.Math" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R0AA" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R0AB" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R0AC" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R1AA" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R1AB" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R1AC" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R1BA" level="DEBUG"/>
     <logger name="at.jku.isse.clones.harness.R1BB" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R1CA" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R1CB" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R1CC" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.R2AA" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.Search" level="DEBUG"/>
-    <logger name="at.jku.isse.clones.harness.Sort" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R1CA" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R1CB" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R1CC" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.R2AA" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.Search" level="DEBUG"/>
+    <logger name="at.jku.isse.clones.harness.classes.Sort" level="DEBUG"/>
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>

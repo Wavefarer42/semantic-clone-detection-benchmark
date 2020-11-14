@@ -1,17 +1,18 @@
-package at.jku.isse.clones.harness
+package at.jku.isse.clones.harness.classes
 
 import mu.KotlinLogging
 import java.lang.reflect.Method
 
-object R0AC {
-    private val logger = KotlinLogging.logger{}
-    data class Request(val l: Int, val r: Int)
+object R0AA {
+    private val logger = KotlinLogging.logger {}
+
+    data class Request(val pattern: String, val num: Int)
 
     val allDevs = (0..9).map { "Dev$it" }
-    const val resourceFile = "R0AC0.txt"
-    const val packagePrefix = "at.jku.isse.clones.r0AC"
+    const val resourceFile = "R0AA0.txt"
+    const val packagePrefix = "at.jku.isse.clones.r0AA"
     const val runMethod = "run"
-    val targetMethodTypes = arrayOf(Int::class.java, Int::class.java)
+    val targetMethodTypes = arrayOf(String::class.java, Int::class.java)
 
     val requests: List<Request> by lazy {
         Thread.currentThread().contextClassLoader.getResourceAsStream(resourceFile)!!.use { stream ->
@@ -19,8 +20,8 @@ object R0AC {
                     .readLines()
                     .drop(1)
                     .map {
-                        val values = it.split(" ")
-                        Request(values[0].toInt(), values[1].toInt())
+                        val parts = it.split(" ")
+                        Request(parts[0], parts[1].toInt())
                     }
         }
     }
@@ -36,8 +37,8 @@ object R0AC {
         targets(devs).forEach { target ->
             logger.debug { "Running $target" }
             requests.forEach {
-                    target.invoke(null, it.l, it.r)
-                }
+                target.invoke(null, it.pattern, it.num)
+            }
             logger.debug { "Finished $target" }
         }
     }

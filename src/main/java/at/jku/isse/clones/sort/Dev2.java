@@ -1,7 +1,5 @@
 package at.jku.isse.clones.sort;
 
-import at.jku.isse.gradient.annotations.GradientModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
